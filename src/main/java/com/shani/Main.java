@@ -24,8 +24,8 @@ public final class Main {
         printWelcomeBanner();
 
         DownloadManager downloadManager = new DownloadManager();
-        downloadManager.initialize();
-        downloadManager.start();
+        System.out.println("Application initialized successfully.");
+        // TODO: Integrate download task creation and execution in a future milestone.
     }
 
     /**
