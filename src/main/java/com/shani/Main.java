@@ -1,11 +1,18 @@
 package com.shani;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.shani.downloader.FileDownloader;
 import com.shani.manager.DownloadManager;
+import com.shani.model.DownloadRequest;
+import com.shani.model.DownloadTask;
 
 /**
- * Application entry point for the multi-threaded file downloader.
+ * Application entry point for the file downloader demo.
  *
- * <p>This class is intentionally minimal and only wires startup concerns.</p>
+ * <p>This class wires the existing download components into a small, runnable
+ * example without introducing new architecture or concurrency behavior.</p>
  */
 public final class Main {
 
@@ -24,8 +31,26 @@ public final class Main {
         printWelcomeBanner();
 
         DownloadManager downloadManager = new DownloadManager();
-        System.out.println("Application initialized successfully.");
-        // TODO: Integrate download task creation and execution in a future milestone.
+        Path outputDirectory = Paths.get(System.getProperty("java.io.tmpdir"), "multi-threaded-file-downloader-demo");
+
+        DownloadRequest request = new DownloadRequest(
+                "https://example.com/",
+                "example.html",
+                outputDirectory.toString(),
+                1);
+        DownloadTask task = new DownloadTask(request);
+        downloadManager.addTask(task);
+
+        try {
+            FileDownloader fileDownloader = new FileDownloader(task);
+            fileDownloader.download();
+
+            System.out.println("Registered tasks: " + downloadManager.getTaskCount());
+            System.out.println("Download status: " + task.getStatus());
+            System.out.println("Download completed successfully.");
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            System.out.println("Download demo failed: " + exception.getMessage());
+        }
     }
 
     /**
